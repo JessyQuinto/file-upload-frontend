@@ -25,3 +25,28 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+# File Management System
+
+## Description
+This project is a comprehensive File Management System that allows users to upload, download, and manage files through a user-friendly web interface. It's built with Angular for the frontend and .NET Core for the backend, providing a robust and scalable solution for file handling.
+
+## Features
+- File upload with drag-and-drop functionality
+- Progress bar for file uploads
+- File listing with download and delete options
+- Responsive design for various screen sizes
+- Secure file storage using Azure Blob Storage
+- RESTful API backend with .NET Core
+
+## Technologies Used
+- Frontend:
+  - Angular 17.3
+  - Angular Material
+  - Tailwind CSS
+- Backend:
+  - .NET Core 8
+  - Entity Framework Core
+  - Azure Blob Storage
+- Database:
+  - SQL Server
