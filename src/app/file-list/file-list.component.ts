@@ -5,7 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { FileUploadService } from '../services/file-upload.service';
 import { NotificationService } from '../services/notification.service';
-import { FileItem, FileResponse } from '../components/file-upload/file-upload.model';
+import { FileItem } from '../components/file-upload/file-upload.model';
+
 @Component({
   selector: 'app-file-list',
   standalone: true,
@@ -19,10 +20,11 @@ export class FileListComponent implements OnInit {
   @Input() totalFiles: number = 0;
   @Input() pageSize: number = 5;
   @Input() pageSizeOptions: number[] = [5, 10, 25, 100];
+
   @Output() pageChange = new EventEmitter<PageEvent>();
   @Output() fileDeleted = new EventEmitter<void>();
 
-  displayedColumns: string[] = ['id', 'name', 'actions'];
+  displayedColumns: string[] = ['id', 'nombre', 'actions'];
 
   constructor(
     private fileUploadService: FileUploadService,
@@ -30,15 +32,20 @@ export class FileListComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log('FileListComponent initialized');
+  }
 
   onPageChange(event: PageEvent) {
+    console.log('Page changed:', event);
     this.pageChange.emit(event);
   }
 
   downloadFile(id: number, fileName: string) {
+    console.log('Downloading file:', fileName, 'ID:', id);
     this.fileUploadService.getFile(id).subscribe({
       next: (blob) => {
+        console.log('File downloaded:', fileName, 'Size:', blob.size);
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -47,20 +54,22 @@ export class FileListComponent implements OnInit {
         window.URL.revokeObjectURL(url);
       },
       error: (error) => {
-        console.error('Error downloading file', error);
+        console.error('Error downloading file:', error);
         this.notificationService.showError('Failed to download file. Please try again.');
       }
     });
   }
 
   deleteFile(id: number) {
+    console.log('Deleting file with ID:', id);
     this.fileUploadService.deleteFile(id).subscribe({
       next: () => {
+        console.log('File deleted successfully');
         this.notificationService.showSuccess('File deleted successfully');
         this.fileDeleted.emit();
       },
       error: (error) => {
-        console.error('Error deleting file', error);
+        console.error('Error deleting file:', error);
         this.notificationService.showError('Failed to delete file. Please try again.');
       }
     });
