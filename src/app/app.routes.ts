@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { FileUploadComponent } from './components/file-upload/file-upload.component';
+import { FileManagementComponent } from './file-management/file-management.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'upload', component: FileUploadComponent },
+  { path: 'file-management', component: FileManagementComponent },
   { path: '**', redirectTo: '' }
 ];

@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { FileUploadService } from '../services/file-upload.service';
 import { NotificationService } from '../services/notification.service';
-
+import { FileItem, FileResponse } from '../components/file-upload/file-upload.model';
 @Component({
   selector: 'app-file-list',
   standalone: true,
@@ -15,14 +15,14 @@ import { NotificationService } from '../services/notification.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FileListComponent implements OnInit {
-  @Input() files: any[] = [];
+  @Input() files: FileItem[] = [];
   @Input() totalFiles: number = 0;
   @Input() pageSize: number = 5;
   @Input() pageSizeOptions: number[] = [5, 10, 25, 100];
   @Output() pageChange = new EventEmitter<PageEvent>();
   @Output() fileDeleted = new EventEmitter<void>();
 
-  displayedColumns: string[] = ['id', 'nombre', 'actions'];
+  displayedColumns: string[] = ['id', 'name', 'actions'];
 
   constructor(
     private fileUploadService: FileUploadService,

@@ -1,20 +1,16 @@
-import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
-import { PageEvent } from '@angular/material/paginator';
-import { FileUploadService} from '../../services/file-upload.service';
+import { FileUploadService } from '../../services/file-upload.service';
 import { NotificationService } from '../../services/notification.service';
 import { FileUploadStateService } from '../../services/file-upload-state.service';
 import { Subject, takeUntil } from 'rxjs';
-import { HeaderComponent } from '../../header/header.component';
-import { FooterComponent } from '../../footer/footer.component';
-import { FileListComponent } from '../../file-list/file-list.component';
-import { FileItem, FileResponse } from './file-upload.model';
+
 @Component({
   selector: 'app-file-upload',
   standalone: true,
-  imports: [CommonModule, MatProgressBarModule, MatButtonModule, HeaderComponent, FooterComponent, FileListComponent],
+  imports: [CommonModule, MatProgressBarModule, MatButtonModule],
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -22,14 +18,9 @@ import { FileItem, FileResponse } from './file-upload.model';
 export class FileUploadComponent implements OnInit, OnDestroy {
   selectedFile: File | null = null;
   uploadProgress: number = 0;
-  files: FileItem[] = [];
   private destroy$ = new Subject<void>();
 
-  // Pagination
-  pageSize = 5;
-  pageSizeOptions: number[] = [5, 10, 25, 100];
-  pageIndex = 0;
-  totalFiles = 0;
+  @Output() fileUploaded = new EventEmitter<void>();
 
   constructor(
     private fileUploadService: FileUploadService,
@@ -45,32 +36,11 @@ export class FileUploadComponent implements OnInit, OnDestroy {
         this.selectedFile = file;
         this.cdr.markForCheck();
       });
-    this.loadFiles();
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  loadFiles() {
-    this.fileUploadService.getAllFiles(this.pageIndex, this.pageSize).subscribe({
-      next: (response: FileResponse) => {
-        this.files = response.files;
-        this.totalFiles = response.total;
-        this.cdr.markForCheck();
-      },
-      error: (error) => {
-        console.error('Error loading files', error);
-        this.notificationService.showError('Failed to load files. Please try again.');
-      }
-    });
-  }
-
-  onPageChange(event: PageEvent) {
-    this.pageIndex = event.pageIndex;
-    this.pageSize = event.pageSize;
-    this.loadFiles();
   }
 
   onFileSelected(event: Event): void {
@@ -114,7 +84,8 @@ export class FileUploadComponent implements OnInit, OnDestroy {
           this.notificationService.showSuccess('File uploaded successfully');
           this.fileUploadStateService.setFile(null);
           this.uploadProgress = 0;
-          this.loadFiles();
+          this.fileUploaded.emit();
+          this.cdr.markForCheck();
         }
       });
     }

@@ -1,11 +1,11 @@
 <nav class="flex space-x-4">
-    <a href="/" class="flex items-center text-muted-foreground">
-      <img src="assets/iconos/GrommetIconsHomeRounded.png" alt="Home" class="h-6 w-auto mr-1">
-      Home
-    </a>
-    <a href="/upload" class="flex items-center text-muted-foreground">
-      <img src="assets/iconos/GrommetIconsCloudUpload.png" alt="Upload" class="h-6 w-auto mr-1">
-      Upload
-    </a>
-  </nav>
+  <a routerLink="/" routerLinkActive="text-primary" [routerLinkActiveOptions]="{exact: true}" class="flex items-center text-muted-foreground hover:text-primary transition-colors duration-200">
+    <img src="assets/iconos/GrommetIconsHomeRounded.png" alt="Home" class="h-6 w-auto mr-1">
+    Home
+  </a>
+  <a routerLink="/file-management" routerLinkActive="text-primary" class="flex items-center text-muted-foreground hover:text-primary transition-colors duration-200">
+    <img src="assets/iconos/GrommetIconsCloudUpload.png" alt="File Management" class="h-6 w-auto mr-1">
+    File Management
+  </a>
+</nav>
   
