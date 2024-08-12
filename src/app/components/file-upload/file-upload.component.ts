@@ -7,11 +7,13 @@ import { FileUploadService } from '../../services/file-upload.service';
 import { NotificationService } from '../../services/notification.service';
 import { FileUploadStateService } from '../../services/file-upload-state.service';
 import { Subject, takeUntil } from 'rxjs';
+import { HeaderComponent } from '../../header/header.component';
+import { FooterComponent } from '../../footer/footer.component';
 
 @Component({
   selector: 'app-file-upload',
   standalone: true,
-  imports: [CommonModule, MatProgressBarModule, MatTableModule, MatButtonModule],
+  imports: [CommonModule, MatProgressBarModule, MatTableModule, MatButtonModule, HeaderComponent, FooterComponent],
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
