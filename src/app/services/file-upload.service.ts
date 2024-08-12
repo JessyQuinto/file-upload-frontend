@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpEventType, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -46,8 +46,12 @@ export class FileUploadService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
-  getAllFiles(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}`);
+  getAllFiles(page: number = 0, pageSize: number = 10): Observable<{ files: any[], total: number }> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<{ files: any[], total: number }>(`${this.apiUrl}`, { params });
   }
 
   testDbConnection(): Observable<any> {

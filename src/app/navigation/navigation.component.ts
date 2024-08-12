@@ -5,11 +5,7 @@ import { RouterModule } from '@angular/router';
   selector: 'app-navigation',
   standalone: true,
   imports: [RouterModule],
-  template: `
-    <nav class="space-x-4">
-      <a routerLink="/" class="text-primary hover:underline">Home</a>
-      <a routerLink="/upload" class="text-primary hover:underline">Upload</a>
-    </nav>
-  `
+  templateUrl: './navigation.component.html',
+  styleUrls: ['./navigation.component.css']
 })
 export class NavigationComponent { }

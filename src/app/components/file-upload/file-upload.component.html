@@ -4,13 +4,13 @@
       <div class="max-w-6xl mx-auto p-4 sm:p-6 md:p-8 bg-card rounded-xl shadow-2xl">
         <h2 class="text-3xl font-bold text-primary mb-6">File Management</h2>
         
-        <div class="flex flex-col md:flex-row gap-8">
-          <div class="flex-1">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
             <div 
               (dragover)="onDragOver($event)" 
               (drop)="onDrop($event)"
               (click)="fileInput.click()"
-              class="border-3 border-dashed border-primary/30 rounded-xl p-8 transition-all duration-300 ease-in-out hover:border-primary/50 hover:bg-primary/5 cursor-pointer mb-6"
+              class="border-4 border-dashed border-primary/30 rounded-xl p-8 transition-all duration-300 ease-in-out hover:border-primary/50 hover:bg-primary/5 cursor-pointer mb-6 flex items-center justify-center"
               role="button"
               tabindex="0"
               aria-label="Upload file area"
@@ -32,49 +32,57 @@
               />
             </div>
           
-            <div *ngIf="selectedFile" class="mb-4 p-4 bg-primary/10 rounded-lg">
-              <p class="text-sm text-primary">Selected file: {{ selectedFile.name }}</p>
-            </div>
-          
             <mat-progress-bar *ngIf="uploadProgress > 0" [value]="uploadProgress" class="mb-4"></mat-progress-bar>
           
             <button 
               (click)="uploadFile()" 
-              [disabled]="!selectedFile || uploadProgress > 0"
-              [ngClass]="{'bg-primary hover:bg-primary/90': selectedFile && uploadProgress === 0, 'bg-muted cursor-not-allowed': !selectedFile || uploadProgress > 0}"
-              class="w-full text-primary-foreground py-3 px-4 rounded-lg transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+              [ngClass]="{'bg-primary hover:bg-primary/90 text-primary-foreground': selectedFile, 'bg-muted text-muted-foreground cursor-not-allowed': !selectedFile}"
+              class="w-full py-3 px-4 rounded-lg transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 mb-4"
             >
-              {{ selectedFile && uploadProgress === 0 ? 'Confirm upload' : uploadProgress > 0 ? 'Uploading...' : 'Select a file' }}
+              Confirm upload
             </button>
+  
+            <div *ngIf="selectedFile" class="p-4 bg-primary/10 rounded-lg">
+              <p class="text-sm text-primary">Selected file: {{ selectedFile.name }}</p>
+            </div>
           </div>
       
-          <div class="flex-1">
+          <div>
             <h3 class="text-2xl font-semibold text-primary mb-4">Uploaded Files</h3>
           
             <div class="overflow-x-auto">
-              <table mat-table [dataSource]="files" class="w-full">
-                <ng-container matColumnDef="id">
-                  <th mat-header-cell *matHeaderCellDef class="px-4 py-2 bg-muted text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">ID</th>
-                  <td mat-cell *matCellDef="let file" class="px-4 py-2">{{file.id}}</td>
-                </ng-container>
-          
-                <ng-container matColumnDef="nombre">
-                  <th mat-header-cell *matHeaderCellDef class="px-4 py-2 bg-muted text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">File Name</th>
-                  <td mat-cell *matCellDef="let file" class="px-4 py-2">{{file.nombre}}</td>
-                </ng-container>
-          
-                <ng-container matColumnDef="actions">
-                  <th mat-header-cell *matHeaderCellDef class="px-4 py-2 bg-muted text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Actions</th>
-                  <td mat-cell *matCellDef="let file" class="px-4 py-2">
-                    <button mat-button color="primary" class="mr-2 bg-primary text-primary-foreground px-3 py-1 rounded" (click)="downloadFile(file.id, file.nombre)">Download</button>
-                    <button mat-button color="warn" class="bg-destructive text-destructive-foreground px-3 py-1 rounded" (click)="deleteFile(file.id)">Delete</button>
-                  </td>
-                </ng-container>
-          
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-muted/50"></tr>
-              </table>
+                <table mat-table [dataSource]="files" class="w-full">
+                    <ng-container matColumnDef="id">
+                      <th mat-header-cell *matHeaderCellDef>ID</th>
+                      <td mat-cell *matCellDef="let file">{{file.id}}</td>
+                    </ng-container>
+                  
+                    <ng-container matColumnDef="nombre">
+                      <th mat-header-cell *matHeaderCellDef>Nombre del archivo</th>
+                      <td mat-cell *matCellDef="let file">{{file.nombre}}</td>
+                    </ng-container>
+                  
+                    <ng-container matColumnDef="actions">
+                      <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                      <td mat-cell *matCellDef="let file">
+                        <button mat-button color="primary" (click)="downloadFile(file.id, file.nombre)">Descargar</button>
+                        <button mat-button color="warn" (click)="deleteFile(file.id)">Eliminar</button>
+                      </td>
+                    </ng-container>
+                  
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                  </table>
             </div>
+            
+            <mat-paginator 
+              [length]="totalFiles"
+              [pageSize]="pageSize"
+              [pageSizeOptions]="pageSizeOptions"
+              (page)="onPageChange($event)"
+              class="mt-4"
+            >
+            </mat-paginator>
           </div>
         </div>
       </div>

@@ -1,8 +1,9 @@
-import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { MatPaginatorModule, PageEvent, MatPaginator } from '@angular/material/paginator';
 import { FileUploadService } from '../../services/file-upload.service';
 import { NotificationService } from '../../services/notification.service';
 import { FileUploadStateService } from '../../services/file-upload-state.service';
@@ -13,7 +14,7 @@ import { FooterComponent } from '../../footer/footer.component';
 @Component({
   selector: 'app-file-upload',
   standalone: true,
-  imports: [CommonModule, MatProgressBarModule, MatTableModule, MatButtonModule, HeaderComponent, FooterComponent],
+  imports: [CommonModule, MatProgressBarModule, MatTableModule, MatButtonModule, MatPaginatorModule, HeaderComponent, FooterComponent],
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -24,6 +25,14 @@ export class FileUploadComponent implements OnInit, OnDestroy {
   files: any[] = [];
   displayedColumns: string[] = ['id', 'nombre', 'actions'];
   private destroy$ = new Subject<void>();
+
+  // Pagination
+  pageSize = 5;
+  pageSizeOptions: number[] = [5, 10, 25, 100];
+  pageIndex = 0;
+  totalFiles = 0;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private fileUploadService: FileUploadService,
@@ -48,9 +57,10 @@ export class FileUploadComponent implements OnInit, OnDestroy {
   }
 
   loadFiles() {
-    this.fileUploadService.getAllFiles().subscribe({
-      next: (files) => {
-        this.files = files;
+    this.fileUploadService.getAllFiles(this.pageIndex, this.pageSize).subscribe({
+      next: (response) => {
+        this.files = response.files;
+        this.totalFiles = response.total;
         this.cdr.markForCheck();
       },
       error: (error) => {
@@ -58,6 +68,13 @@ export class FileUploadComponent implements OnInit, OnDestroy {
         this.notificationService.showError('Failed to load files. Please try again.');
       }
     });
+
+  }
+
+  onPageChange(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadFiles();
   }
 
   onFileSelected(event: Event): void {

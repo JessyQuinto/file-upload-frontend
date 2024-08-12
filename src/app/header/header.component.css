@@ -1,0 +1,24 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--bg-card);
+  }
+  
+  header .text-primary {
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+  
+  header img {
+    height: 2rem;
+    margin-right: 0.5rem;
+  }
+  
+  img[src*="LogosAzure.png"] {
+    width: auto;
+    height: auto;
+    max-width: 100px;
+  }  
