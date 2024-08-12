@@ -25,98 +25,50 @@ export class FileUploadService {
       map((event: HttpEvent<any>) => {
         switch (event.type) {
           case HttpEventType.UploadProgress:
-            console.log(`Upload progress: ${Math.round((100 * event.loaded) / (event.total ?? 1))}%`);
-            return Math.round((100 * event.loaded) / (event.total ?? 1));
+            const total = event.total ?? 1;
+            return Math.round((100 * event.loaded) / total);
           case HttpEventType.Response:
-            console.log('Upload complete:', event.body);
             return 100;
           default:
             return 0;
         }
       }),
-      catchError(error => {
-        console.error('Upload error:', error);
-        return this.handleError(error);
-      })
+      catchError(this.handleError)
     );
   }
 
   getFile(id: number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${id}`, { responseType: 'blob' })
-      .pipe(
-        map(response => {
-          console.log('File retrieved:', response);
-          return response;
-        }),
-        catchError(error => {
-          console.error('Get file error:', error);
-          return this.handleError(error);
-        })
-      );
+      .pipe(catchError(this.handleError));
   }
 
   updateFile(id: number, file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file, file.name);
     return this.http.put(`${this.apiUrl}/${id}`, formData)
-      .pipe(
-        map(response => {
-          console.log('File updated:', response);
-          return response;
-        }),
-        catchError(error => {
-          console.error('Update file error:', error);
-          return this.handleError(error);
-        })
-      );
+      .pipe(catchError(this.handleError));
   }
 
   deleteFile(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`)
-      .pipe(
-        map(response => {
-          console.log('File deleted:', response);
-          return response;
-        }),
-        catchError(error => {
-          console.error('Delete file error:', error);
-          return this.handleError(error);
-        })
-      );
+      .pipe(catchError(this.handleError));
   }
 
   getAllFiles(page: number = 0, pageSize: number = 10): Observable<FileResponse> {
-    let params = new HttpParams()
+    const params = new HttpParams()
       .set('page', page.toString())
       .set('pageSize', pageSize.toString());
 
-    return this.http.get<FileResponse>(`${this.apiUrl}`, { params }).pipe(
-      map(response => {
-        console.log('Files retrieved:', response);
-        return response;
-      }),
-      catchError(error => {
-        console.error('Get all files error:', error);
-        return this.handleError(error);
-      })
-    );
+    return this.http.get<FileResponse>(`${this.apiUrl}`, { params })
+      .pipe(catchError(this.handleError));
   }
 
   testDbConnection(): Observable<any> {
     return this.http.get(`${this.apiUrl}/test-db-connection`)
-      .pipe(
-        map(response => {
-          console.log('Database connection test result:', response);
-          return response;
-        }),
-        catchError(error => {
-          console.error('Test DB connection error:', error);
-          return this.handleError(error);
-        })
-      );
+      .pipe(catchError(this.handleError));
   }
 
-  private handleError(error: HttpErrorResponse) {
+  private handleError = (error: HttpErrorResponse): Observable<never> => {
     let errorMessage = 'An unknown error occurred!';
     if (error.error instanceof ErrorEvent) {
       // Client-side or network error

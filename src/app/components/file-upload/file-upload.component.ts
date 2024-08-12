@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { FileUploadService } from '../../services/file-upload.service';
 import { NotificationService } from '../../services/notification.service';
 import { FileUploadStateService } from '../../services/file-upload-state.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, Observable, throwError  } from 'rxjs';
 
 @Component({
   selector: 'app-file-upload',
@@ -96,4 +96,6 @@ export class FileUploadComponent implements OnInit, OnDestroy {
     const maxSize = 50 * 1024 * 1024; // 50MB
     return validTypes.includes(file.type) && file.size <= maxSize;
   }
+
+  
 }
