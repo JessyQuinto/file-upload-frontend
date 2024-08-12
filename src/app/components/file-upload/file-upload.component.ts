@@ -1,20 +1,20 @@
-import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
-import { MatPaginatorModule, PageEvent, MatPaginator } from '@angular/material/paginator';
-import { FileUploadService } from '../../services/file-upload.service';
+import { PageEvent } from '@angular/material/paginator';
+import { FileUploadService} from '../../services/file-upload.service';
 import { NotificationService } from '../../services/notification.service';
 import { FileUploadStateService } from '../../services/file-upload-state.service';
 import { Subject, takeUntil } from 'rxjs';
 import { HeaderComponent } from '../../header/header.component';
 import { FooterComponent } from '../../footer/footer.component';
-
+import { FileListComponent } from '../../file-list/file-list.component';
+import { FileItem, FileResponse } from './file-upload.model';
 @Component({
   selector: 'app-file-upload',
   standalone: true,
-  imports: [CommonModule, MatProgressBarModule, MatTableModule, MatButtonModule, MatPaginatorModule, HeaderComponent, FooterComponent],
+  imports: [CommonModule, MatProgressBarModule, MatButtonModule, HeaderComponent, FooterComponent, FileListComponent],
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -22,8 +22,7 @@ import { FooterComponent } from '../../footer/footer.component';
 export class FileUploadComponent implements OnInit, OnDestroy {
   selectedFile: File | null = null;
   uploadProgress: number = 0;
-  files: any[] = [];
-  displayedColumns: string[] = ['id', 'nombre', 'actions'];
+  files: FileItem[] = [];
   private destroy$ = new Subject<void>();
 
   // Pagination
@@ -31,8 +30,6 @@ export class FileUploadComponent implements OnInit, OnDestroy {
   pageSizeOptions: number[] = [5, 10, 25, 100];
   pageIndex = 0;
   totalFiles = 0;
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private fileUploadService: FileUploadService,
@@ -58,7 +55,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
 
   loadFiles() {
     this.fileUploadService.getAllFiles(this.pageIndex, this.pageSize).subscribe({
-      next: (response) => {
+      next: (response: FileResponse) => {
         this.files = response.files;
         this.totalFiles = response.total;
         this.cdr.markForCheck();
@@ -68,7 +65,6 @@ export class FileUploadComponent implements OnInit, OnDestroy {
         this.notificationService.showError('Failed to load files. Please try again.');
       }
     });
-
   }
 
   onPageChange(event: PageEvent) {
@@ -122,36 +118,6 @@ export class FileUploadComponent implements OnInit, OnDestroy {
         }
       });
     }
-  }
-
-  downloadFile(id: number, fileName: string) {
-    this.fileUploadService.getFile(id).subscribe({
-      next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = fileName;
-        link.click();
-        window.URL.revokeObjectURL(url);
-      },
-      error: (error) => {
-        console.error('Error downloading file', error);
-        this.notificationService.showError('Failed to download file. Please try again.');
-      }
-    });
-  }
-
-  deleteFile(id: number) {
-    this.fileUploadService.deleteFile(id).subscribe({
-      next: () => {
-        this.notificationService.showSuccess('File deleted successfully');
-        this.loadFiles();
-      },
-      error: (error) => {
-        console.error('Error deleting file', error);
-        this.notificationService.showError('Failed to delete file. Please try again.');
-      }
-    });
   }
 
   private isValidFile(file: File): boolean {
