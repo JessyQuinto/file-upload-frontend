@@ -1,7 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { FileUploadService } from '../services/file-upload.service';
 import { NotificationService } from '../services/notification.service';
@@ -10,7 +12,7 @@ import { FileItem } from '../components/file-upload/file-upload.model';
 @Component({
   selector: 'app-file-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatPaginatorModule],
+  imports: [CommonModule, MatGridListModule, MatButtonModule, MatIconModule, MatTooltipModule, MatPaginatorModule],
   templateUrl: './file-list.component.html',
   styleUrls: ['./file-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -18,13 +20,11 @@ import { FileItem } from '../components/file-upload/file-upload.model';
 export class FileListComponent implements OnInit {
   @Input() files: FileItem[] = [];
   @Input() totalFiles: number = 0;
-  @Input() pageSize: number = 5;
-  @Input() pageSizeOptions: number[] = [5, 10, 25, 100];
+  @Input() pageSize: number = 12;
+  @Input() pageSizeOptions: number[] = [12, 24, 48, 96];
 
   @Output() pageChange = new EventEmitter<PageEvent>();
   @Output() fileDeleted = new EventEmitter<void>();
-
-  displayedColumns: string[] = ['id', 'nombre', 'actions'];
 
   constructor(
     private fileUploadService: FileUploadService,
@@ -73,5 +73,9 @@ export class FileListComponent implements OnInit {
         this.notificationService.showError('Failed to delete file. Please try again.');
       }
     });
+  }
+
+  isImageFile(contentType: string): boolean {
+    return contentType.startsWith('image/');
   }
 }

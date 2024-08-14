@@ -26,8 +26,8 @@ import { FileItem, FileResponse } from '../components/file-upload/file-upload.mo
 export class FileManagementComponent implements OnInit {
   files: FileItem[] = [];
   totalFiles: number = 0;
-  pageSize: number = 5;
-  pageSizeOptions: number[] = [5, 10, 25, 100];
+  pageSize: number = 12; // Aumentado para mostrar más archivos por página
+  pageSizeOptions: number[] = [12, 24, 48, 96]; // Ajustado para coincidir con el nuevo pageSize
   pageIndex: number = 0;
 
   constructor(

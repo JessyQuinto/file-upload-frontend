@@ -1,0 +1,33 @@
+.bg-primary-dark {
+    background-color: darken(your-primary-color, 10%);
+  }
+  
+  .text-primary {
+    color: your-primary-color;
+  }
+  
+  .border-primary {
+    border-color: your-primary-color;
+  }
+  
+  .bg-primary {
+    background-color: your-primary-color;
+  }
+  
+  .focus\:ring-primary:focus {
+    --tw-ring-color: your-primary-color;
+  }
+  
+  .shadow-md {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+  
+  .ease-out {
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
