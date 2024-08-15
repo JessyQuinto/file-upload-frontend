@@ -1,16 +1,21 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpEvent, HttpEventType, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { FileItem, FileResponse } from '../components/file-upload/file-upload.model';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileUploadService {
-  private apiUrl = 'https://localhost:7163/api/Productos';
+  private apiUrl = 'https://appwebupload-aug2gccncdguezhj.brazilsouth-01.azurewebsites.net/api/Productos';
+  //private apiUrl = 'https://localhost:7163/api/Productos';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
 
   uploadFile(file: File): Observable<number> {
     console.log('Uploading file:', file.name);
@@ -97,9 +102,11 @@ export class FileUploadService {
 
   private handleError = (error: HttpErrorResponse): Observable<never> => {
     let errorMessage = 'An unknown error occurred!';
-    if (error.error instanceof ErrorEvent) {
+    if (isPlatformBrowser(this.platformId) && error.error instanceof ErrorEvent) {
+      // Error del lado del cliente
       errorMessage = `Error: ${error.error.message}`;
     } else {
+      // Error del lado del servidor
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
     console.error('API Error:', errorMessage);
